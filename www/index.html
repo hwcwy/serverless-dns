@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>迁移通知</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --green: #3fb950;
+      --red: #f85149;
+      --text: #c9d1d9;
+      --muted: #8b949e;
+    }
+
+    body {
+      font-family: "SF Mono", "Fira Code", "Consolas", "Monaco", monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .header {
+      margin-bottom: 2.5rem;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .title .icon {
+      font-size: 1.25rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .link-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .link-item:hover {
+      border-color: var(--muted);
+      transform: translateX(4px);
+    }
+
+    .link-item.old {
+      opacity: 0.5;
+    }
+
+    .link-item.old:hover {
+      opacity: 0.7;
+    }
+
+    .link-item.new {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px var(--green), 0 4px 20px rgba(63, 185, 80, 0.1);
+    }
+
+    .link-item.new:hover {
+      box-shadow: 0 0 0 1px var(--green), 0 8px 30px rgba(63, 185, 80, 0.2);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .old .status-dot {
+      background: var(--red);
+      box-shadow: 0 0 8px rgba(248, 81, 73, 0.5);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    .new .status-dot {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(63, 185, 80, 0.5);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+
+    .link-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .link-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .link-url {
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .new .link-url {
+      color: var(--green);
+    }
+
+    .arrow-down {
+      color: var(--muted);
+      font-size: 1.5rem;
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(-3px);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: translateY(3px);
+        opacity: 1;
+      }
+    }
+
+    .action {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-visit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--green);
+      color: var(--bg);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-visit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(63, 185, 80, 0.3);
+    }
+
+    .btn-visit:active {
+      transform: translateY(0);
+    }
+
+    .btn-visit svg {
+      transition: transform 0.2s ease;
+    }
+
+    .btn-visit:hover svg {
+      transform: translateX(2px);
+    }
+
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      background: var(--card);
+    }
+
+    .btn-copy.copied {
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .btn-copy svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Typing effect for title */
+    .title {
+      overflow: hidden;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: var(--green);
+      margin-left: 2px;
+      animation: cursorBlink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes cursorBlink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">
+        <span class="icon">⚠️</span>
+        Domain Migration<span class="cursor"></span>
+      </h1>
+      <p class="subtitle">当前域名即将停用，请收藏新地址以确保服务连续性</p>
+    </div>
+
+    <div class="links">
+      <div class="link-item old">
+        <div class="status-dot"></div>
+        <div class="link-content">
+          <div class="link-label">Deprecated</div>
+          <div class="link-url">https://chargetrack-x.deno.dev</div>
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+
+      <div class="link-item new">
+        <div class="status-dot"></div>
+        <div class="link-content">
+          <div class="link-label">New Domain</div>
+          <div class="link-url">https://chargetrack-x.efil.eu.org</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action">
+      <a href="https://chargetrack-x.efil.eu.org" class="btn-visit">
+        Visit New Domain
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
+      <button class="btn-copy" onclick="copyLink()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span id="copy-text">Copy Link</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function copyLink() {
+      const link = "https://chargetrack-x.efil.eu.org";
+      navigator.clipboard.writeText(link).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        const text = document.getElementById('copy-text');
+        btn.classList.add('copied');
+        text.textContent = 'Copied!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          text.textContent = 'Copy Link';
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+
+</html>
