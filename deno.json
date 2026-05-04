@@ -1,20 +1,7 @@
 {
-  "compilerOptions": {
-    "allowJs": true
-  },
-  "importMap": "import_map.json",
-  "nodeModulesDir": true,
-  "lint": {
-    "files": {
-      "exclude": ["**/**"]
-    }
-  },
-  "fmt": {
-    "files": {
-      "exclude": ["**/**"]
-    }
-  },
   "tasks": {
-    "prepare": "./src/build/pre.sh"
-  }
+    "dev": "deno run --allow-net --allow-read --watch=src,www src/server-deno.ts",
+    "start": "deno run --allow-net src/server-deno.ts"
+  },
+  "imports": {}
 }
